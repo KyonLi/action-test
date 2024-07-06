@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          repository: 'https://github.com/KyonLi/ufi003-kernel.git'
+          repository: 'KyonLi/ufi003-kernel'
 
       - name: Build
         run: |
