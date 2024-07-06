@@ -23,5 +23,6 @@ jobs:
           export ARCH=arm64
           cp config .config
           make prepare
+          grep LOCALVERSION include/config/auto.conf
           scripts/setlocalversion
           make kernelrelease
