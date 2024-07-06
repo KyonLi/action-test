@@ -1,0 +1,25 @@
+name: Build kernel deb packages
+on: push
+
+jobs:
+  build:
+    name: Build kernel
+    runs-on: ubuntu-latest
+    container: debian:bookworm
+    steps:
+      - name: Prepare
+        run: |
+          apt -y update
+          apt -y install git lsb-release binfmt-support qemu-user-static gcc-aarch64-linux-gnu bison flex libssl-dev debhelper bc rsync kmod cpio
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          export CROSS_COMPILE=aarch64-linux-gnu-
+          export ARCH=arm64
+          cp config .config
+          make prepare
+          scripts/setlocalversion
+          make kernelrelease
