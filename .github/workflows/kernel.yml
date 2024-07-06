@@ -17,6 +17,9 @@ jobs:
         with:
           repository: 'KyonLi/ufi003-kernel'
 
+      - name: Prepare repository
+        run: git config --global --add safe.directory "$(pwd)"
+
       - name: Build
         run: |
           export CROSS_COMPILE=aarch64-linux-gnu-
