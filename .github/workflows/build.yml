@@ -10,7 +10,7 @@ jobs:
       - name: Prepare
         run: |
           apt -y update
-          apt -y install tree git wget rsync debootstrap binfmt-support qemu-user-static android-sdk-libsparse-utils mkbootimg xz
+          apt -y install tree git wget rsync debootstrap binfmt-support qemu-user-static android-sdk-libsparse-utils mkbootimg xz-utils
 
       - name: Checkout
         uses: actions/checkout@v4
