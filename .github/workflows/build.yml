@@ -8,8 +8,8 @@ jobs:
     steps:
       - name: Prepare
         run: |
-          apt -y update
-          apt -y install tree git wget rsync debootstrap binfmt-support qemu-user-static android-sdk-libsparse-utils mkbootimg xz-utils
+          sudo apt -y update
+          sudo apt -y install tree git wget rsync debootstrap binfmt-support qemu-user-static android-sdk-libsparse-utils mkbootimg xz-utils
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,7 +20,7 @@ jobs:
       - name: Build
         run: |
           cd rootfs
-          ./build.sh
+          sudo ./build.sh
           tree ../
 
       - name: Generate release tag
