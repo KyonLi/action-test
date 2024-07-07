@@ -16,7 +16,7 @@ wget -P ../kernel "$K_HEADERS_DEB_URL"
 
 mkdir debian build
 debootstrap --arch=arm64 --foreign $DIST debian https://deb.debian.org/debian/
-cp /usr/bin/qemu-aarch64-static debian/usr/bin/
+# cp /usr/bin/qemu-aarch64-static debian/usr/bin/
 LANG=C LANGUAGE=C LC_ALL=C chroot debian /debootstrap/debootstrap --second-stage
 cp ../deb-pkgs/*.deb ../kernel/*.deb chroot.sh debian/tmp/
 mount --bind /proc debian/proc
@@ -25,7 +25,7 @@ mount --bind /dev/pts debian/dev/pts
 mount --bind /sys debian/sys
 LANG=C LANGUAGE=C LC_ALL=C chroot debian /tmp/chroot.sh
 mv debian/tmp/info.md ./
-rm -rf debian/usr/bin/qemu-aarch64-static debian/tmp/* debian/root/.bash_history > /dev/null 2>&1
+rm -rf debian/tmp/* debian/root/.bash_history > /dev/null 2>&1
 cp debian/etc/debian_version ./
 cp debian/boot/initrd.img* debian/usr/lib/linux-image*/qcom/*ufi003*.dtb ../kernel/
 umount debian/proc
