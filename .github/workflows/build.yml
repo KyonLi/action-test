@@ -10,21 +10,17 @@ jobs:
         run: |
           sudo apt -y update
           sudo apt -y install tree git wget rsync debootstrap binfmt-support qemu-user-static android-sdk-libsparse-utils mkbootimg xz-utils
-          pwd
 
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Prepare repository
-        run: |
-          pwd
-          git config --global --add safe.directory "$(pwd)"
+        run: git config --global --add safe.directory "$(pwd)"
 
       - name: Build
         run: |
           cd rootfs
           sudo ./build.sh
-          tree ../
 
       - name: Generate release tag
         id: version
@@ -33,16 +29,15 @@ jobs:
           TAG_NAME=$(cat rootfs/debian_version)-${{ github.run_number }}
           git tag $TAG_NAME
           git push origin $TAG_NAME
-          CHANGE=$(echo -e "$(cat rootfs/info.md)\n\n$(git log -1 --format=%s)")
+          echo -e "$(cat rootfs/info.md)\n\n$(git log -1 --format=%s)" > release_notes.md
           echo "NAME=$NAME" >> $GITHUB_OUTPUT
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
-          echo "CHANGE=$CHANGE" >> $GITHUB_OUTPUT
 
       - name: Releases
         uses: softprops/action-gh-release@v2
         with:
           name: ${{ steps.version.outputs.NAME }}
-          body: ${{ steps.version.outputs.CHANGE }}
+          body_path: release_notes.md
           tag_name: ${{ steps.version.outputs.TAG_NAME }}
           files: |
             rootfs/rootfs.img.xz
