@@ -10,12 +10,15 @@ jobs:
         run: |
           sudo apt -y update
           sudo apt -y install tree git wget rsync debootstrap binfmt-support qemu-user-static android-sdk-libsparse-utils mkbootimg xz-utils
+          pwd
 
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Prepare repository
-        run: git config --global --add safe.directory "$(pwd)"
+        run: |
+          pwd
+          git config --global --add safe.directory "$(pwd)"
 
       - name: Build
         run: |
@@ -30,7 +33,7 @@ jobs:
           TAG_NAME=$(cat rootfs/debian_version)-${{ github.run_number }}
           git tag $TAG_NAME
           git push origin $TAG_NAME
-          CHANGE=echo -e "$(cat rootfs/info.md)\n\n$(git log -1 --format=%s)"
+          CHANGE=$(echo -e "$(cat rootfs/info.md)\n\n$(git log -1 --format=%s)")
           echo "NAME=$NAME" >> $GITHUB_OUTPUT
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
           echo "CHANGE=$CHANGE" >> $GITHUB_OUTPUT
