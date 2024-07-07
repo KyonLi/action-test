@@ -5,7 +5,9 @@ jobs:
   build:
     name: Build rootfs
     runs-on: ubuntu-latest
-    container: debian:bookworm
+    container: 
+      image: debian:bookworm
+      options: --user root
     steps:
       - name: Prepare
         run: |
