@@ -27,7 +27,8 @@ LANG=C LANGUAGE=C LC_ALL=C chroot debian /tmp/chroot.sh
 mv debian/tmp/info.md ./
 rm -rf debian/tmp/* debian/root/.bash_history > /dev/null 2>&1
 cp debian/etc/debian_version ./
-cp debian/boot/initrd.img* debian/usr/lib/linux-image*/qcom/*ufi003*.dtb ../kernel/
+cp debian/boot/initrd.img* ../kernel/initrd.img
+cp debian/usr/lib/linux-image*/qcom/*ufi003*.dtb ../kernel/
 umount debian/proc
 umount debian/dev/pts
 umount debian/dev
@@ -53,4 +54,4 @@ rm -rf debian-ufi003.img debian build > /dev/null 2>&1
 
 cd ../kernel
 ./build-boot-img.sh
-rm -rf initrd.img* *.dtb *.deb Image.gz > /dev/null 2>&1
+rm -rf initrd.img *.dtb *.deb Image.gz > /dev/null 2>&1

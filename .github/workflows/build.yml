@@ -26,11 +26,11 @@ jobs:
       - name: Generate release tag
         id: version
         run: |
-          NAME=$(echo "Debian $(cat debian_version)")
-          TAG_NAME=$(cat debian_version)-${{ github.run_number }}
+          NAME=$(echo "Debian $(cat rootfs/debian_version)")
+          TAG_NAME=$(cat rootfs/debian_version)-${{ github.run_number }}
           git tag $TAG_NAME
           git push origin $TAG_NAME
-          CHANGE=echo -e "$(cat info.md)\n\n$(git log -1 --format=%s)"
+          CHANGE=echo -e "$(cat rootfs/info.md)\n\n$(git log -1 --format=%s)"
           echo "NAME=$NAME" >> $GITHUB_OUTPUT
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
           echo "CHANGE=$CHANGE" >> $GITHUB_OUTPUT
@@ -42,5 +42,5 @@ jobs:
           body: ${{ steps.version.outputs.CHANGE }}
           tag_name: ${{ steps.version.outputs.TAG_NAME }}
           files: |
-            rootfs.img.xz
-            ../kernel/*.img
+            rootfs/rootfs.img.xz
+            kernel/*.img
