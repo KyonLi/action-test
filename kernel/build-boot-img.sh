@@ -2,7 +2,7 @@
 
 DTB_FILE=msm8916-handsome-openstick-ufi003.dtb
 DTB_FILE_NO_MODEM=msm8916-handsome-openstick-ufi003-no-modem.dtb
-RAMDISK_FILE=initrd.img*
+RAMDISK_FILE=initrd.img
 
 cat Image.gz $DTB_FILE > kernel-dtb
 
