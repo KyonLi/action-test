@@ -1,44 +1,43 @@
-name: Build rootfs
+name: Build kernel deb packages
 on: push
 
 jobs:
   build:
-    name: Build rootfs
+    name: Build kernel
     runs-on: ubuntu-latest
+    container: debian:bookworm
     steps:
       - name: Prepare
         run: |
-          sudo apt -y update
-          sudo apt -y install tree git wget rsync debootstrap binfmt-support qemu-user-static android-sdk-libsparse-utils mkbootimg xz-utils
+          apt -y update
+          apt -y install wget git lsb-release gcc-aarch64-linux-gnu bison flex libssl-dev debhelper bc rsync kmod cpio
 
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          repository: 'msm8916-mainline/linux'
+          ref: 'v6.6-msm8916'
 
       - name: Prepare repository
         run: git config --global --add safe.directory "$(pwd)"
 
       - name: Build
         run: |
-          cd rootfs
-          sudo ./build.sh
+          export CROSS_COMPILE=aarch64-linux-gnu-
+          export ARCH=arm64
+          wget https://raw.githubusercontent.com/KyonLi/ufi003-kernel/master/.config
+          sed -i "s/handsomehack/msm8916/g" .config
+          make olddefconfig
+          make deb-pkg -j"$(($(grep -c processor < /proc/cpuinfo)*2))"
 
-      - name: Generate release tag
-        id: version
+      - name: Workaround actions/upload-artifact#176
         run: |
-          NAME=$(echo "Debian $(cat rootfs/debian_version)")
-          TAG_NAME=$(cat rootfs/debian_version)-${{ github.run_number }}
-          git tag $TAG_NAME
-          git push origin $TAG_NAME
-          echo -e "$(cat rootfs/info.md)\n\n$(git log -1 --format=%s)" > release_notes.md
-          echo "NAME=$NAME" >> $GITHUB_OUTPUT
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "artifacts_path=$(realpath ..)" >> $GITHUB_ENV
 
-      - name: Releases
-        uses: softprops/action-gh-release@v2
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.version.outputs.NAME }}
-          body_path: release_notes.md
-          tag_name: ${{ steps.version.outputs.TAG_NAME }}
-          files: |
-            rootfs/rootfs.img.xz
-            kernel/*.img
+          name: 'v6.6-msm8916'
+          path: |
+            action-test/arch/arm64/boot/Image.gz
+            ${{ env.artifacts_path }}/linux-*
