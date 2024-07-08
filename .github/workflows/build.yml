@@ -25,9 +25,8 @@ jobs:
         run: |
           export CROSS_COMPILE=aarch64-linux-gnu-
           export ARCH=arm64
-          wget https://raw.githubusercontent.com/KyonLi/ufi003-kernel/master/.config
-          sed -i "s/handsomehack/msm8916/g" .config
-          make olddefconfig
+          wget -P arch/arm64/configs https://raw.githubusercontent.com/KyonLi/action-test/master/ufi003_defconfig
+          make ufi003_defconfig
           make deb-pkg -j"$(($(grep -c processor < /proc/cpuinfo)*2))"
 
       - name: Workaround actions/upload-artifact#176
