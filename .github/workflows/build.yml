@@ -39,5 +39,5 @@ jobs:
         with:
           name: 'v6.6-msm8916'
           path: |
-            action-test/arch/arm64/boot/Image.gz
+            arch/arm64/boot/Image.gz
             ${{ env.artifacts_path }}/linux-*
