@@ -13,7 +13,5 @@ if [ `id -u` -ne 0 ]
   exit
 fi
 
-echo $0
-echo >> info.md
-echo "🔗 [linux-headers & linux-libc-dev]($K_DEV_URL)" >> info.md
+echo -e "\n🔗 [linux-headers & linux-libc-dev]($K_DEV_URL)" >> info.md
 cat info.md
