@@ -7,4 +7,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Echo
-        run: echo -e "\n🔗 [linux-headers & linux-libc-dev]($K_DEV_URL)" >> info.md
+        run: cd rootfs && ./build.sh
