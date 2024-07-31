@@ -14,4 +14,4 @@ if [ `id -u` -ne 0 ]
 fi
 
 echo -e "\n🔗 [linux-headers & linux-libc-dev]($K_DEV_URL)" >> info.md
-rm -rf debian/tmp/* debian/root/.bash_history > /dev/null 2>&1
+cat info.md
