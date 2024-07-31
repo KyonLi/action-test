@@ -1,42 +1,10 @@
-name: Build kernel deb packages
+name: Test
 on: push
 
 jobs:
   build:
-    name: Build kernel
+    name: Test
     runs-on: ubuntu-latest
-    container: debian:bookworm
     steps:
-      - name: Prepare
-        run: |
-          apt -y update
-          apt -y install wget git lsb-release gcc-aarch64-linux-gnu bison flex libssl-dev debhelper bc rsync kmod cpio
-
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          repository: 'msm8916-mainline/linux'
-          ref: 'v6.6-msm8916'
-
-      - name: Prepare repository
-        run: git config --global --add safe.directory "$(pwd)"
-
-      - name: Build
-        run: |
-          export CROSS_COMPILE=aarch64-linux-gnu-
-          export ARCH=arm64
-          wget -P arch/arm64/configs https://raw.githubusercontent.com/KyonLi/action-test/master/ufi003_defconfig
-          make ufi003_defconfig
-          make deb-pkg -j"$(($(grep -c processor < /proc/cpuinfo)*2))"
-
-      - name: Workaround actions/upload-artifact#176
-        run: |
-          echo "artifacts_path=$(realpath ..)" >> $GITHUB_ENV
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: 'v6.6-msm8916'
-          path: |
-            arch/arm64/boot/Image.gz
-            ${{ env.artifacts_path }}/linux-*
+      - name: Echo
+        run: echo -e "\n🔗 [linux-headers & linux-libc-dev]($K_DEV_URL)" >> info.md
