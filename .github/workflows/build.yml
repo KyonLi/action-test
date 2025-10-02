@@ -1,20 +1,30 @@
-name: Test
+name: Build debian
 on: push
 
 jobs:
   build:
-    name: Test
+    name: Build debian
     runs-on: ubuntu-latest
     steps:
       - name: Prepare
         run: |
           sudo apt-get -y update
-          sudo apt-get -y install gcc-arm-none-eabi device-tree-compiler python3-pycryptodome
+          sudo apt-get -y install debootstrap binfmt-support qemu-user-static android-sdk-libsparse-utils
+
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Build
+
+      - name: Prepare repository
+        run: git config --global --add safe.directory "$(pwd)"
+
+      - name: Build rootfs
         run: |
-          cd aboot
-          ./build.sh
-          ls -hl
-          cat ver.txt
+          cd rootfs
+          sudo ./build.sh
+          sudo xz -T0 rootfs.img
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: rootfs
+          path: rootfs/rootfs.img.xz
