@@ -8,8 +8,8 @@ jobs:
     steps:
       - name: Prepare
         run: |
-          apt-get -y update
-          apt-get -y install gcc-arm-none-eabi device-tree-compiler python3-pycryptodome
+          sudo apt-get -y update
+          sudo apt-get -y install gcc-arm-none-eabi device-tree-compiler python3-pycryptodome
       - name: Checkout
         uses: actions/checkout@v4
       - name: Build
