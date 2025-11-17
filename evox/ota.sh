@@ -32,6 +32,6 @@ else
     exit 1
 fi
 
-unzip -j "$filename" /META-INF/com/android/otacert
+unzip -j "$filename" META-INF/com/android/otacert
 custota-tool gen-csig --input "$filename" --key testkey.pk8 --cert testkey.x509.pem --cert-verify otacert --output "${filename%.zip}.csig"
 custota-tool gen-update-info --file pstar.json --location "$download" --csig-location "https://raw.githubusercontent.com/KyonLi/action-test/master/evox/${filename%.zip}.csig"
