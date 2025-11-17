@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "full": {
+    "location_ota": "https://sourceforge.net/projects/crdroid-v7-x-sofiar/files/Pstar/A16/EvolutionX-16.0-20251116-pstar-11.4.1-Unofficial.zip/download",
+    "location_csig": "https://raw.githubusercontent.com/KyonLi/action-test/master/evox/EvolutionX-16.0-20251116-pstar-11.4.1-Unofficial.zip.csig"
+  }
+}
