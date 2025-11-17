@@ -1,0 +1,39 @@
+name: Evolution X OTA
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-ota:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Install custota-tool
+        run: |
+          cd evox
+          sudo bash install_custota.sh
+
+      - name: Gen OTA info
+        run: |
+          cd evox
+          bash ota.sh
+
+      - name: Commit & Push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add evox/*.csig evox/*.json
+          git commit -m "Update Evox"
+          git push
