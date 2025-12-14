@@ -1,0 +1,52 @@
+name: APatch pstar LineageOS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  patch-kernel:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download kptools and kpimg
+        run: |
+          TAG=$(curl -fsSL https://api.github.com/repos/bmax121/KernelPatch/releases?per_page=1 | jq -r .[0].tag_name)
+          wget -O kptools "https://github.com/bmax121/KernelPatch/releases/download/$TAG/kptools-linux"
+          wget -O kpimg "https://github.com/bmax121/KernelPatch/releases/download/$TAG/kpimg-linux"
+          chmod 755 kptools
+          chmod 755 kpimg
+          echo "KP_VERSION=$TAG" >> $GITHUB_ENV
+
+      - name: Download magiskboot
+        run: |
+          wget -O magiskboot "https://raw.githubusercontent.com/magojohnji/magiskboot-linux/refs/heads/main/x86_64/magiskboot"
+          chmod 755 magiskboot
+
+      - name: Download boot.img
+        run: |
+          DATE=$(curl -fsSL https://download.lineageos.org/api/v2/devices/pstar/builds | jq -r .[0].date)
+          BOOT_URL=$(curl -fsSL https://download.lineageos.org/api/v2/devices/pstar/builds | jq -r .[0].files[1].url)
+          wget "$BOOT_URL"
+          echo "KERNEL_DATE=$DATE" >> $GITHUB_ENV
+
+      - name: Patch boot.img
+        env:
+          AP_SKEY: ${{ secrets.AP_SKEY }}
+        run: |
+          ./magiskboot unpack boot.img
+          mv kernel kernel-origin
+          ./kptools -p --image kernel-origin --skey "$AP_SKEY" --kpimg ./kpimg --out kernel
+
+      - name: Make Anykernel3
+        run: |
+          git clone https://github.com/osm0sis/AnyKernel3 --depth=1 AnyKernel3
+          sed -i 's/do.devicecheck=1/do.devicecheck=0/g' AnyKernel3/anykernel.sh
+          sed -i 's!BLOCK=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot;!BLOCK=auto;!g' AnyKernel3/anykernel.sh
+          sed -i 's/IS_SLOT_DEVICE=0;/IS_SLOT_DEVICE=auto;/g' AnyKernel3/anykernel.sh
+          mv kernel AnyKernel3/Image
+          rm -rf AnyKernel3/.git* AnyKernel3/README.md
+
+      - name: Upload AnyKernel3
+        uses: actions/upload-artifact@v4
+        with:
+          name: AnyKernel3-pstar-apatch-${{ env.KP_VERSION }}-${{ env.KERNEL_DATE }}
+          path: AnyKernel3/*
